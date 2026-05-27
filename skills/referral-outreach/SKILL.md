@@ -1,25 +1,28 @@
 ---
 name: referral-outreach
-description: Use when drafting a referral request message for a specific job — reads the user's knowledge base (wenjun_wu_refreshed.md), parses the job description, picks the 2-3 strongest matching points, and generates a short personalized message (3-5 sentences) the user can send to a referrer or hiring contact
+description: Use when drafting a referral request message for a specific job OR answering referral form questions (e.g. "Why is this candidate suitable?") — reads the user's knowledge base, parses the job description from any URL or pasted text, picks the strongest matching points, and generates copy-paste ready output
 ---
 
 # Referral Outreach Skill
 
 ## Overview
 
-Generates concise, personalized referral request messages for specific job applications. Reads the user's master knowledge base, extracts the 2-3 most relevant experience points for the target role, and drafts a message the user can send to a referrer (colleague, mutual connection, or hiring manager).
+Two modes, same knowledge base:
 
-**Core principle:** Short beats long. A referral message is not a cover letter. It should take the reader 20 seconds to read and leave them with one clear ask.
+1. **Outreach message** — a short personalized message (3-5 sentences) the candidate sends to a referrer asking to be referred.
+2. **Referral form answers** — drafted answers to specific questions a referrer must fill out when submitting a referral (e.g. "Why is this candidate a good fit?", "How do you know them?", "What are their strongest skills?").
+
+**Core principle:** Short beats long. A referral message is not a cover letter. Referral form answers should be specific and evidence-backed — referrers stake their reputation on what they write.
 
 ## When to Use
 
-- User has a job they want to apply to and knows someone (or has a warm intro to someone) at the company
-- User wants to ask a former colleague or contact to refer them
-- User wants a short intro message to send alongside their resume
+- User wants to ask a colleague or contact to refer them → **outreach message mode**
+- User's referrer needs to fill out a referral form and asks the candidate for talking points → **referral form mode**
+- Both at once (user provides the job + the form questions in one request)
 
 **DO NOT use for:**
 - Full cover letters (different skill)
-- Cold LinkedIn outreach to strangers with no connection (use cover letter skill instead)
+- Cold LinkedIn outreach to strangers with no connection
 - Resume tailoring (use resume-tailoring skill)
 
 ## Quick Start
@@ -29,12 +32,16 @@ Generates concise, personalized referral request messages for specific job appli
    - A job posting URL (any ATS: Lever, Greenhouse, Workday, iCIMS, LinkedIn, company careers page, etc.)
    - Pasted job description text
    - Company name + role title (minimum — skill will web-search for context)
-2. Referrer's name and relationship (e.g., "former colleague", "met at NeurIPS", "mutual friend introduced us")
+2. Mode — detected automatically:
+   - If user provides referral form questions → **referral form mode**
+   - Otherwise → **outreach message mode**
+   - If both are needed, produce both in sequence
+3. For outreach message: referrer's name and relationship
 
 **Optional:**
 - Any specific angle to emphasize (e.g., "stress my medical imaging background")
 - Preferred tone (warm/casual vs. professional/formal)
-- Channel (LinkedIn message / email / Slack) — skill will ask if not provided
+- Channel (LinkedIn message / email / Slack) — asked if not provided
 
 ## Workflow
 
@@ -162,21 +169,63 @@ our conversation about [topic], I thought there might be a good fit.
 me, or pointing me to the right person on the team?
 ```
 
+### Phase 5b: Referral Form Answers (when form questions are provided)
+
+**Trigger:** User supplies one or more referral form questions (e.g. pasted from the company's referral portal).
+
+**Common question types and answer strategy:**
+
+| Question | Length | Strategy |
+|---|---|---|
+| "Why is this candidate suitable for this role?" | 3-5 sentences | Lead with the strongest direct match from Phase 3, add one metric, close with a fit statement |
+| "How do you know this candidate / what is your relationship?" | 1-2 sentences | State relationship + context briefly; defer to the user to fill in if unknown |
+| "What are their strongest skills relevant to this role?" | 2-4 bullet points or 2-3 sentences | Pick top 2-3 from the matched talking points; be specific (method + outcome, not just label) |
+| "Describe a project or achievement that demonstrates their ability" | 3-5 sentences | Pick one project from knowledge base that best matches the JD; include scope, method, and measurable result |
+| "Would you recommend this candidate? Why?" | 2-3 sentences | Affirmative opener + one concrete reason + forward-looking close |
+| "Is there anything else you'd like to add?" | Optional, 1-2 sentences | Use only if there's a strong secondary point not covered elsewhere; otherwise leave blank |
+
+**Answer drafting rules:**
+- **Write in the referrer's voice** — first person ("I've worked with / I know"), but the user (candidate) provides the substance from the knowledge base. Flag any sentence where the referrer would need to speak from personal experience with `[referrer to confirm]`.
+- **Be specific.** "She led fine-tuning of a 4B-parameter diffusion model" beats "She has strong ML experience."
+- **Match length to the field.** If the form says 200 characters, don't draft 200 words.
+- **Never fabricate** relationship details the referrer didn't have. If the relationship is unknown, use a placeholder.
+
+**Output format for form answers:**
+
+```
+REFERRAL FORM ANSWERS
+─────────────────────
+
+Q: [Question as written]
+A: [Drafted answer — copy-paste ready]
+   [referrer to confirm: ...] ← only if a sentence needs personal verification
+
+Q: [Next question]
+A: [Answer]
+
+─────────────────────
+Notes:
+  • Sentences marked [referrer to confirm] require the referrer to verify
+    from personal knowledge — do not submit without review.
+  • Talking points sourced from: [knowledge base section]
+```
+
 ### Phase 6: Present and Refine
 
-Present the draft with:
-- The message itself (copy-paste ready)
-- A one-line explanation of each talking point chosen and why
-- Subject line (if email)
-- Word count
+Present all drafted output (message and/or form answers) with:
+- Each section copy-paste ready
+- A one-line rationale for each talking point chosen
+- Word/character count where relevant
+- Any `[referrer to confirm]` flags clearly called out
 
 Ask:
 ```
 Does this capture the right angle? I can:
 - Adjust tone (more/less formal)
 - Swap in a different talking point
-- Shorten or lengthen
+- Shorten or lengthen any answer
 - Add/remove subject line
+- Draft answers to additional form questions
 ```
 
 Make any requested adjustments and re-present.
@@ -231,4 +280,55 @@ MICCAI / Medical Image Analysis), and I've spent the past two years at
 Meta deploying ML models at scale — feels like a natural next step.
 
 Would you be open to referring me? Happy to send my resume!
+```
+
+---
+
+## Example 2: Referral Form Answers
+
+**Input:**
+- Job: ML Research Scientist, Adaptive Behavioral Systems at Toyota Research Institute
+- Form questions provided by referrer:
+  1. "Why do you think this candidate is suitable for the role?"
+  2. "What are their strongest technical skills relevant to this position?"
+
+**Knowledge base:** `resumes/knowledge_base.md` (auto-discovered)
+
+**Top matches to TRI JD:**
+- Post-training of 4B-parameter T2I/I2I diffusion model (Diffusion DPO + LoRA) → matches "foundational model fine-tuning"
+- PhD in Biomedical and Health Informatics + 5 publications (MICCAI, Medical Image Analysis) → matches "strong research track record"
+- Late-stage ranking at Meta (HSTU, GNN) → matches "large-scale ML, industry experience"
+
+**Draft:**
+
+```
+REFERRAL FORM ANSWERS
+─────────────────────
+
+Q: Why do you think this candidate is suitable for the role?
+A: Wenjun's background sits at the exact intersection TRI's Adaptive
+   Behavioral Systems team is targeting. She recently led post-training
+   of a 4B-parameter vision-language diffusion model at Meta — directly
+   relevant to the role's focus on foundational model fine-tuning. Her
+   PhD in Biomedical and Health Informatics (UW, 2024) gives her a
+   cross-disciplinary foundation that maps naturally to the team's work
+   bridging behavioral science and generative AI, and she has a strong
+   publication record in ML at venues including MICCAI and Medical Image
+   Analysis. [referrer to confirm: any personal observation of her
+   cross-disciplinary collaboration style]
+
+Q: What are their strongest technical skills relevant to this position?
+A: • Large-scale generative model training and fine-tuning (diffusion
+     models, LoRA, Diffusion DPO) — deployed at Meta production scale
+   • Late-stage recommendation ranking (HSTU architecture, GNN-based
+     user modeling, hard-negative mining)
+   • Medical image analysis and computational pathology (5 peer-reviewed
+     publications; PyTorch, TensorFlow)
+
+─────────────────────
+Notes:
+  • One sentence in Q1 marked [referrer to confirm] — remove or rewrite
+    based on your direct experience with Wenjun.
+  • Talking points sourced from: Meta RS experience + Education sections
+    of knowledge_base.md
 ```
