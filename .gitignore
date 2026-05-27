@@ -18,3 +18,13 @@ test-outputs/
 
 # Git worktrees
 .worktrees/
+
+# Personal resume files (user-specific, not part of the skill)
+resumes/
+references/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.synctex.gz
